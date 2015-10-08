@@ -35,19 +35,16 @@ public class BoardPanel extends JPanel implements MouseListener{
         for(ColoredEllipse coloredEllipse : list) {
         	coloredEllipse.paint(g, getSize());
         }
-       // list = new ArrayList<ColoredEllipse>();
-        g.setColor(Color.RED);
-        g.drawString("This is the board",20,20);
     }
 
     /**
      * 
-     * @param i row
-     * @param j col
+     * @param row row
+     * @param col col
      * @param color
      */
-	public void addPiece(int i, int j, Color color) {    	
-    	list.add(new ColoredEllipse(i, j, color));
+	public void addPiece(int row, int col, Color color) {    	
+    	list.add(new ColoredEllipse(col, row, color));
 		
 	}
 	

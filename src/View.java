@@ -7,7 +7,6 @@ import java.util.Observer;
  * Created by Ludde on 2015-10-02.
  */
 public class View implements Observer {
-    private int padding = 5; //pixels
     private Color player1Color = Color.RED;
     private Color player2Color = Color.YELLOW;
     
@@ -22,26 +21,29 @@ public class View implements Observer {
     }
 
     public void open() {
-        //1. Create the frame.
         JFrame frame = new JFrame("Four in a row - Lunicore");
-
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         boardPanel = new BoardPanel(controller);
-        
         frame.add(boardPanel);
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("First Menu");
-        menu.getAccessibleContext().setAccessibleDescription(
-                "The only menu in this program that has menu items");
-
-        JMenuItem menuItem = new JMenuItem("String here");
-
-        menu.add(menuItem);
         
+        JMenuBar menuBar = new JMenuBar();
+        
+        JMenu menu = new JMenu("Menu");
+        JMenuItem resetMenuItem = new ResetButton(controller);
+        JMenuItem highScoreMenuItem = new HighScoreButton(controller);
+        JMenuItem saveGameMenuItem = new SaveGameButton(controller);
+        JMenuItem loadGameMenuItem = new LoadGameButtin(controller);
+        menu.add(resetMenuItem);
+        menu.add(highScoreMenuItem);
+        menu.add(saveGameMenuItem);
+        menu.add(loadGameMenuItem);
 
+        //hax, don't want to have to handle layouts so 
+        StateDisplay stateMenu = new StateDisplay(model);
+        
         menuBar.add(menu);
-
+        menuBar.add(stateMenu);
+        
         frame.setJMenuBar(menuBar);
         frame.setSize(500, 500);
 
@@ -77,7 +79,7 @@ public class View implements Observer {
 					//it's here for future implementation of more than 2 players.
 					e.printStackTrace();
 				}
-                boardPanel.addPiece(i, board[i].length - 1 - j, curColor);
+                boardPanel.addPiece(board.length - 1 - i, j, curColor);
             }
         }
         boardPanel.repaint();
