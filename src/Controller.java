@@ -25,7 +25,7 @@ public class Controller {
 			model.playRow(col);
 		} catch (InvalidMoveException e) {
 			// Not a valid move;
-			System.out.println("not a free row");
+			System.out.println(e.toString());
 		}
 
 	}

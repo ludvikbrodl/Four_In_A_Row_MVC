@@ -3,11 +3,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-public class LoadGameButtin extends JMenuItem implements ActionListener {
+public class LoadGameButton extends JMenuItem implements ActionListener {
 
 	private Controller controller;
 
-	public LoadGameButtin(Controller controller) {
+	public LoadGameButton(Controller controller) {
 		super("Load Game");
 		this.controller = controller;
 		addActionListener(this);

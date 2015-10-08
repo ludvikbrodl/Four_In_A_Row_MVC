@@ -1,4 +1,5 @@
 import java.awt.Font;
+import java.rmi.NotBoundException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,8 +23,14 @@ public class StateDisplay extends JMenu implements Observer {
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		String state = "";
-		if (model.winnerExists()) {
-			state = "WINNER!!!: " + model.getWinner();
+		if (model.hasWinner()) {
+			try {
+				state = "WINNER!!!: '" + model.getWinner() + "' - Reset game to play";
+			} catch (NotBoundException e) {
+				//something is amiss, tried to access winner before win condition was met
+				System.out.println(e.toString());
+				e.printStackTrace();
+			}
 		} else {
 			state = "Player Turn: " + model.getCurrentPlayerName();			
 		}

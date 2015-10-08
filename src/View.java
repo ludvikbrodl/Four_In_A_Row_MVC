@@ -32,8 +32,10 @@ public class View implements Observer {
         JMenuItem resetMenuItem = new ResetButton(controller);
         JMenuItem highScoreMenuItem = new HighScoreButton(controller);
         JMenuItem saveGameMenuItem = new SaveGameButton(controller);
-        JMenuItem loadGameMenuItem = new LoadGameButtin(controller);
+        JMenuItem loadGameMenuItem = new LoadGameButton(controller);
+        JMenuItem setPlayerNameMenuItem = new SetPlayerNameMenuItem(controller);
         menu.add(resetMenuItem);
+        menu.add(setPlayerNameMenuItem);
         menu.add(highScoreMenuItem);
         menu.add(saveGameMenuItem);
         menu.add(loadGameMenuItem);
