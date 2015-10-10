@@ -5,10 +5,18 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+/**
+ * JMenuItem that shows the high score with a JFrame message dialog.
+ * @author Ludde
+ *
+ */
 public class HighScoreButton extends JMenuItem implements ActionListener {
-
+	private static final long serialVersionUID = 8279729502204813430L;
 	private Controller controller;
 
+	/**
+	 * @param controller where to send performed actions.
+	 */
 	public HighScoreButton(Controller controller) {
 		super("High Score");
 		this.controller = controller;

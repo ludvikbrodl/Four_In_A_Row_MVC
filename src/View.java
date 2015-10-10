@@ -4,7 +4,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * Created by Ludde on 2015-10-02.
+ * The View of the model.
+ * @author Ludde
+ *
  */
 public class View implements Observer {
     private Color player1Color = Color.RED;
@@ -15,17 +17,24 @@ public class View implements Observer {
     private BoardPanel boardPanel;
 
 
+    /**
+     * Creates a new view. open() has to be called in order to start the view.
+     * @param controller which GUI actions are translated to.
+     * @param model where to get the current state of the game.
+     */
     public View(Controller controller, Model model) {
         this.model = model;
         this.controller = controller;
     }
 
     public void open() {
+    	//Create the main window.
         JFrame frame = new JFrame("Four in a row - Lunicore");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         boardPanel = new BoardPanel(controller);
         frame.add(boardPanel);
         
+        //The Action bar.
         JMenuBar menuBar = new JMenuBar();
         
         JMenu menu = new JMenu("Menu");
@@ -40,14 +49,15 @@ public class View implements Observer {
         menu.add(saveGameMenuItem);
         menu.add(loadGameMenuItem);
 
-        //hax, don't want to have to handle layouts so 
+        //'hax', don't want to have to handle layouts - 
+        //subclassing JMenuItem and using it's title for statedisplaying.
         StateDisplay stateMenu = new StateDisplay(model);
         
         menuBar.add(menu);
         menuBar.add(stateMenu);
         
         frame.setJMenuBar(menuBar);
-        frame.setSize(500, 500);
+        frame.setSize(600, 600);
 
         frame.setVisible(true);
         
@@ -56,17 +66,10 @@ public class View implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-    	boardPanel.clearPieces();
+    	boardPanel.clearGamePieces();
         String[][] board = model.getBoard();
-//        for (int i = 0; i < board.length; i++) {
-//			for (int j = 0; j < board[i].length; j++) {
-//				System.out.print(board[i][j] + " ");
-//			}
-//			System.out.println();
-//		}
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-            	
             	Color curColor = Color.BLACK; //Error checking
         		try {
 					if (model.getPlayerName(1).equals(board[i][j])) {
@@ -81,12 +84,9 @@ public class View implements Observer {
 					//it's here for future implementation of more than 2 players.
 					e.printStackTrace();
 				}
-                boardPanel.addPiece(board.length - 1 - i, j, curColor);
+                boardPanel.addGamePiece(board.length - 1 - i, j, curColor);
             }
         }
         boardPanel.repaint();
-        
-        
-       
     }
 }

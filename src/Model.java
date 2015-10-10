@@ -1,11 +1,21 @@
+import java.io.Serializable;
 import java.rmi.NotBoundException;
 import java.util.HashMap;
 import java.util.Observable;
 
 /**
- * Created by Ludde on 2015-10-02.
+ * Four In A Row model.
+ * <h3>Current know limitations:</h3>
+ * <ul>
+ * <li>Assigning player1 and player2 to have the same name will give unexpected
+ * behavior.</li>
+ * </ul>
+ * 
+ * @author Ludde
+ *
  */
-public class Model extends Observable {
+public class Model extends Observable implements Serializable {
+	private static final long serialVersionUID = -4987156369922245142L;
 	private static final int WIN_CONDITION = 4;
 	private String player1, player2;
 	private String[][] board;
@@ -13,13 +23,23 @@ public class Model extends Observable {
 	private String winner = "";
 	private int lastPlayedRow;
 	private int lastPlayedCol;
-	private HashMap<String, Integer> highScores = new HashMap<String, Integer>();;
+	private HashMap<String, Integer> highScores = new HashMap<String, Integer>();
 
+	/**
+	 * Creates a new instance of the model.
+	 */
 	public Model() {
-		player1 = "player1";
-		player2 = "player2";
+		player1 = "red";
+		player2 = "yellow";
 		currentPlayer = player1;
 		board = new String[6][7];
+		newBoard();
+	}
+
+	/**
+	 * Clean the board to (all strings = "")
+	 */
+	private void newBoard() {
 		for (int row = 0; row < 6; row++) {
 			for (int col = 0; col < 7; col++) {
 				board[row][col] = "";
@@ -31,7 +51,7 @@ public class Model extends Observable {
 	 * Put the piece in the specified column.
 	 * 
 	 * @param col
-	 *            the column to put the pice in.
+	 *            the column to put the piece in.
 	 * @throws InvalidMoveException
 	 *             if the column is full.
 	 */
@@ -39,9 +59,8 @@ public class Model extends Observable {
 		if (hasWinner()) {
 			throw new InvalidMoveException("There's a winner, reset game to play");
 		}
-		// indexing is swapped row/col....
 		for (int row = 0; row < 6; row++) {
-			if (board[row][col] == "") {
+			if (board[row][col].equals("")) {
 				board[row][col] = currentPlayer;
 				lastPlayedRow = row;
 				lastPlayedCol = col;
@@ -55,6 +74,9 @@ public class Model extends Observable {
 		throw new InvalidMoveException("Column is full");
 	}
 
+	/**
+	 * Helper function, swap to next player's turn.
+	 */
 	private void swapCurrentPlayer() {
 		if (currentPlayer.equals(player1)) {
 			currentPlayer = player2;
@@ -192,63 +214,129 @@ public class Model extends Observable {
 		return nbrFound;
 	}
 
+	/**
+	 * Gets the current state of the board.
+	 * 
+	 * @return the board
+	 */
 	public String[][] getBoard() {
 		return board;
 	}
 
+	/**
+	 * Gets the player who's turn it is next.
+	 * 
+	 * @return the player who's turn it is next.
+	 */
 	public String getCurrentPlayerName() {
 		return currentPlayer;
 	}
 
-	public String getPlayerName(int i) throws IllegalArgumentException {
-		if (i == 1) {
+	/**
+	 * Gets the player name of the specified index.
+	 * 
+	 * @param index
+	 *            of of the player. Valid Index = 1 and 2.
+	 * @return the player with the specified index.
+	 * @throws IllegalArgumentException
+	 *             if the index is out of bounds (currently != 1 or 2)
+	 */
+	public String getPlayerName(int index) throws IllegalArgumentException {
+		switch (index) {
+		case 1:
 			return player1;
-		} else if (i == 2) {
+		case 2:
 			return player2;
+		default:
+			throw new IndexOutOfBoundsException(index + " is not a valid player number");
 		}
-		throw new IllegalArgumentException("This player is not currently playing");
 	}
 
-	public void setPlayerName(int i, String name) {
-		switch (i) {
+	/**
+	 * Sets the player name of the specified index.
+	 * 
+	 * @param index
+	 *            the index of the player who's name should be set.
+	 * @param newName
+	 *            the new player name
+	 */
+	public void setPlayerName(int index, String newName) {
+		switch (index) {
 		case 1:
-			player1 = name;
+			player1 = newName;
 			break;
 		case 2:
-			player2 = name;
+			player2 = newName;
 			break;
 		default:
-			throw new IndexOutOfBoundsException(i + " is not a valid player number");
+			throw new IndexOutOfBoundsException(index + " is not a valid player number");
 		}
+		setChanged();
+		notifyObservers();
 	}
 
+	/**
+	 * Starts a fresh game. High score is retained.
+	 */
 	public void resetGame() {
-		for (int row = 0; row < 6; row++) {
-			for (int col = 0; col < 7; col++) {
-				board[row][col] = "";
-			}
-		}
+		newBoard();
 		winner = "";
 		setChanged();
 		notifyObservers();
 	}
 
+	/**
+	 * Gets the high score of this game.
+	 * 
+	 * @return the high score of this game.
+	 */
 	public HashMap<String, Integer> getHighScore() {
-		highScores.put("player2", 2);
-		highScores.put("plataef2", 5);
-		highScores.put("aefae", 1);
 		return highScores;
 	}
 
+	/**
+	 * State checker, to see if a winner exists or the game is still going.
+	 * 
+	 * @return true if someone has achieved four in a row.
+	 */
 	public boolean hasWinner() {
 		return !winner.equals("");
 	}
 
+	/**
+	 * Gets the winner of the current game.
+	 * 
+	 * @return the winner of the game.
+	 * @throws NotBoundException
+	 *             if no player has met the win condition.
+	 */
 	public String getWinner() throws NotBoundException {
-		if (!hasWinner()) {
+		if (hasWinner()) {
 			return winner;
 		} else {
 			throw new NotBoundException("No player has met the win condition");
 		}
+	}
+
+	/**
+	 * Sets and variables to the new model. Very skeptical that this is the best
+	 * way to do it. But I wanted to avoid having View variable in the
+	 * controller. (Which would be needed to set the new Model instance if it
+	 * was solely done in the controller).
+	 * 
+	 * @param model the model to read all attributes from
+	 */
+
+	public void loadModelState(Model model) {
+		this.player1 = model.player1;
+		this.player2 = model.player2;
+		this.board = model.board;
+		this.currentPlayer = model.currentPlayer;
+		this.winner = model.winner;
+		this.lastPlayedRow = model.lastPlayedRow;
+		this.lastPlayedCol = model.lastPlayedCol;
+		this.highScores = model.highScores;
+		setChanged();
+		notifyObservers();
 	}
 }
