@@ -85,6 +85,12 @@ public class Model extends Observable implements Serializable {
 		}
 	}
 
+	/**
+	 * Checks if a player has met the Win Condition (>= 4 in a row) and updates
+	 * winner accordingly. The private functions in here are horrible and
+	 * repetitive, reducing the repitive code is probably possible but was not
+	 * something i prioritized.
+	 */
 	private void checkForWin() {
 		int horInARow = checkHorizontal();
 		int verInARow = checkVeritcal();
