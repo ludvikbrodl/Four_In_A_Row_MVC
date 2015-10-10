@@ -32,7 +32,6 @@ public class Audit {
 			DateFormat df = new SimpleDateFormat("yyyy-MMM-dd  hh:mm:ss - ");
 			String time = df.format(date);
 			pw.println(time + toLog);
-			System.out.println(toLog);
 			pw.flush();
 		}
 	}
